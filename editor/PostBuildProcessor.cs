@@ -66,7 +66,7 @@ public static class BuildPostProcess
     private static void AddPListValues(string pathToBuiltProject)
     {
         string plistPath = Path.Combine(pathToBuiltProject, CIScript.PLIST_FILE);
-        string mopubTextPath = "project/.ci/sk_adnetworks.txt";
+        string mopubTextPath = "./.ci/sk_adnetworks.txt";
 
         string plistText = File.ReadAllText(plistPath);
         string mopubText = File.ReadAllText(mopubTextPath);
