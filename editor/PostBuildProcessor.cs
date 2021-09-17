@@ -20,7 +20,7 @@ public static class BuildPostProcess
 
     private const string PROVISIONING_PROFILE_SPECIFIER_KEY = "PROVISIONING_PROFILE_SPECIFIER";
 
-    [PostProcessBuild(999)]
+    [PostProcessBuild(1)]
     public static void IOSBuildPostProcess(BuildTarget target, string pathToBuiltProject)
     {
         AddPListValues(pathToBuiltProject);
@@ -42,9 +42,6 @@ public static class BuildPostProcess
         Debug.Log("Setting Code sign style to manual and setup provisioning profile specifier...");
         pbxProject.SetBuildProperty(guidProject, CODE_SIGN_STYLE_KEY, CIScript.CODE_SIGN_STYLE);
         pbxProject.SetBuildProperty(guidProject, PROVISIONING_PROFILE_SPECIFIER_KEY, CIScript.PROVISIONING_PROFILE_KEY);
-        
-        string mainTargetGuid = pbxProject.GetUnityMainTargetGuid();
-        pbxProject.SetBuildProperty(pbxProject.TargetGuidByName("UnityFramework"), "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "NO");
 
         pbxProject.WriteToFile(projectPath);
     }

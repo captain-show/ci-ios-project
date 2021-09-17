@@ -1,8 +1,23 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 
 public static class CIScript
 {
+    private class Platform
+    {
+        public PlatformInfo Android { get; set; }
+        public PlatformInfo Ios { get; set; }
+
+        public class PlatformInfo
+        {
+            public string Version { get; set; }
+            public int BundleNumber { get; set; }
+        }
+    }
+
     public const string PLIST_FILE = "Info.plist";
     public const string CURRENT_PROJECT_VERSION = "1.0.1";
     public const string APPLE_GENERIC_VALUE = "apple-generic";
@@ -11,10 +26,10 @@ public static class CIScript
 
     public const string PROVISIONING_PROFILE_KEY = "PROVISIONING_PROFILE";
 
-    private static string BuildPath = "./Builds/Android/";
-    private static string BuildPathIOS = "./Builds/iOS/";
+    private const string BuildPath = "./Builds/Android/";
+    private const string BuildPathIOS = "./Builds/iOS/";
 
-    private const string IOSBuildNumber = "4";
+    private const string projectJsonFilePath = @".ci/project-info.json";
 
     private static string[] FindEnabledEditorScenes()
     {
@@ -41,13 +56,45 @@ public static class CIScript
     #endif
         EditorUserBuildSettings.exportAsGoogleAndroidProject = true;
 
+        SetProjectVertsion(BuildTarget.Android);
+
         BuildPipeline.BuildPlayer(FindEnabledEditorScenes(), BuildPath, BuildTarget.Android, BuildOptions.AcceptExternalModificationsToPlayer);
     }
 
     public static void GenerateIOSBuild()
     {
-        PlayerSettings.iOS.buildNumber = IOSBuildNumber;
+        SetProjectVertsion(BuildTarget.iOS);
 
         BuildPipeline.BuildPlayer(FindEnabledEditorScenes(), BuildPathIOS, BuildTarget.iOS, BuildOptions.None);
+    }
+
+    public static void GenerateIOSTestBuild()
+    {
+        SetProjectVertsion(BuildTarget.iOS);
+
+        PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+
+        BuildPipeline.BuildPlayer(FindEnabledEditorScenes(), BuildPathIOS, BuildTarget.iOS, BuildOptions.None);
+    }
+
+    private static void SetProjectVertsion(BuildTarget buildTarget)
+    {
+        Platform platform = JsonConvert.DeserializeObject<Platform>(File.ReadAllText(projectJsonFilePath));
+
+        switch (buildTarget)
+        {
+            case BuildTarget.Android:
+                PlayerSettings.Android.bundleVersionCode = platform.Android.BundleNumber;
+                PlayerSettings.bundleVersion = platform.Android.Version;
+
+                break;
+            case BuildTarget.iOS:
+                PlayerSettings.iOS.buildNumber = platform.Ios.BundleNumber.ToString();
+                PlayerSettings.bundleVersion = platform.Ios.Version;
+
+                break;
+            default:
+                throw new ArgumentException("Choise android or ios build target!");
+        }
     }
 }
