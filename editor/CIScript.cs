@@ -13,6 +13,7 @@ public static class CIScript
 
         public class PlatformInfo
         {
+            public string BundleName { get; set; }
             public string Version { get; set; }
             public int BundleNumber { get; set; }
         }
@@ -29,7 +30,7 @@ public static class CIScript
     private const string BuildPath = "./Builds/Android/";
     private const string BuildPathIOS = "./Builds/iOS/";
 
-    private const string projectJsonFilePath = @".ci/project-info.json";
+    private const string projectJsonFilePath = ".ci/project-info.json";
 
     private static string[] FindEnabledEditorScenes()
     {
@@ -84,11 +85,13 @@ public static class CIScript
         switch (buildTarget)
         {
             case BuildTarget.Android:
+                PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, platform.Android.BundleName);
                 PlayerSettings.Android.bundleVersionCode = platform.Android.BundleNumber;
                 PlayerSettings.bundleVersion = platform.Android.Version;
 
                 break;
             case BuildTarget.iOS:
+                PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, platform.Ios.BundleName);
                 PlayerSettings.iOS.buildNumber = platform.Ios.BundleNumber.ToString();
                 PlayerSettings.bundleVersion = platform.Ios.Version;
 
