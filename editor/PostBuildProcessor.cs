@@ -68,7 +68,7 @@ public static class BuildPostProcess
         string plistPath = Path.Combine(pathToBuiltProject, CIScript.PLIST_FILE);
         string mopubTextPath = "./.ci/sk_adnetworks.txt";
 
-        if (File.Exists(mopubTextPath))
+        if (!File.Exists(mopubTextPath))
         {
             return;
         }
