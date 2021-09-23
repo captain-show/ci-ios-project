@@ -68,8 +68,19 @@ public static class BuildPostProcess
         string plistPath = Path.Combine(pathToBuiltProject, CIScript.PLIST_FILE);
         string mopubTextPath = "./.ci/sk_adnetworks.txt";
 
-        string plistText = File.ReadAllText(plistPath);
+        if (File.Exists(mopubTextPath))
+        {
+            return;
+        }
+
         string mopubText = File.ReadAllText(mopubTextPath);
+
+        if (mopubText.Length == 0)
+        { 
+            return;
+        }
+
+        string plistText = File.ReadAllText(plistPath);
 
         var lines = plistText.Split('\n').ToList();
         lines.Insert(lines.Count - 3, mopubText);
