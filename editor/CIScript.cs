@@ -21,7 +21,7 @@ public static class CIScript
 
     public const string PLIST_FILE = "Info.plist";
     public const string APPLE_GENERIC_VALUE = "apple-generic";
-    public const string ENABLE_BITCODE = "YES";
+    public const string ENABLE_BITCODE = "NO";
     public const string CODE_SIGN_STYLE = "Manual";
 
     public const string PROVISIONING_PROFILE_KEY = "PROVISIONING_PROFILE";
