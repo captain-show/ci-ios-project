@@ -23,7 +23,6 @@ public static class BuildPostProcess
     [PostProcessBuild(1)]
     public static void IOSBuildPostProcess(BuildTarget target, string pathToBuiltProject)
     {
-        AddPListValues(pathToBuiltProject);
         RemoveDeprecatedInfoPListKeys(pathToBuiltProject);
 
         string projectPath = PBXProject.GetPBXProjectPath(pathToBuiltProject);
@@ -34,7 +33,6 @@ public static class BuildPostProcess
 
         Debug.Log("Setting Versioning system to Apple Generic...");
         pbxProject.SetBuildProperty(guidProject, VERSIONING_SYSTEM_KEY, CIScript.APPLE_GENERIC_VALUE);
-        pbxProject.SetBuildProperty(guidProject, CURRENT_PROJECT_VERSION_KEY, CIScript.CURRENT_PROJECT_VERSION);
 
         Debug.Log("Disabling bitcode...");
         pbxProject.SetBuildProperty(guidProject, ENABLE_BITCODE_KEY, CIScript.ENABLE_BITCODE);
@@ -61,31 +59,6 @@ public static class BuildPostProcess
         }
 
         File.WriteAllText(plistPath, plist.WriteToString());
-    }
-
-    private static void AddPListValues(string pathToBuiltProject)
-    {
-        string plistPath = Path.Combine(pathToBuiltProject, CIScript.PLIST_FILE);
-        string mopubTextPath = "./.ci/sk_adnetworks.txt";
-
-        if (!File.Exists(mopubTextPath))
-        {
-            return;
-        }
-
-        string mopubText = File.ReadAllText(mopubTextPath);
-
-        if (mopubText.Length == 0)
-        { 
-            return;
-        }
-
-        string plistText = File.ReadAllText(plistPath);
-
-        var lines = plistText.Split('\n').ToList();
-        lines.Insert(lines.Count - 3, mopubText);
-
-        File.WriteAllText(plistPath, string.Join("\n", lines));
     }
 }
 #endif

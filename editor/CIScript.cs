@@ -20,7 +20,6 @@ public static class CIScript
     }
 
     public const string PLIST_FILE = "Info.plist";
-    public const string CURRENT_PROJECT_VERSION = "1.0.1";
     public const string APPLE_GENERIC_VALUE = "apple-generic";
     public const string ENABLE_BITCODE = "YES";
     public const string CODE_SIGN_STYLE = "Manual";
